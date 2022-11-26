@@ -18,7 +18,6 @@ import java.util.concurrent.CompletableFuture;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.concurrent.CompletableFuture.completedFuture;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
@@ -38,33 +37,34 @@ class SuppemagbrotScraperTest {
         final CompletableFuture<HttpResponse<Object>> response = mockResponseWithBody(html);
         given(httpClient.sendAsync(any(), any())).willReturn(response);
 
-        assertThat(scraper.scrape().join()).isNotNull().satisfies(menu -> assertSoftly(softly -> {
-            softly.assertThat(menu.dishes()).hasSize(6);
-            softly.assertThat(menu.dishes()).anySatisfy(dish -> {
-                final String expected = "Cremige Kürbissuppe nach Art des Hauses (veget.) (glu-frei)";
-                softly.assertThat(dish.name()).isEqualTo(expected);
-            });
-            softly.assertThat(menu.dishes()).anySatisfy(dish -> {
-                final String expected = "Kichererbsenkorma mit Reis (vegan) (glu-frei)";
-                softly.assertThat(dish.name()).isEqualTo(expected);
-            });
-            softly.assertThat(menu.dishes()).anySatisfy(dish -> {
-                final String expected = "Puten-Senf-Eintopf mit Bulgur";
-                softly.assertThat(dish.name()).isEqualTo(expected);
-            });
-            softly.assertThat(menu.dishes()).anySatisfy(dish -> {
-                final String expected = "Apfel-Möhren-Ingwer-Suppe (vegan) (glu-frei)";
-                softly.assertThat(dish.name()).isEqualTo(expected);
-            });
-            softly.assertThat(menu.dishes()).anySatisfy(dish -> {
-                final String expected = "Ital. Tomaten-Tortellini-Eintopf (veget.) (wahlw. mit Parmesan)";
-                softly.assertThat(dish.name()).isEqualTo(expected);
-            });
-            softly.assertThat(menu.dishes()).anySatisfy(dish -> {
-                final String expected = "Thai-Hühnchen-Suppe mit Glasnudeln";
-                softly.assertThat(dish.name()).isEqualTo(expected);
-            });
-        }));
+        assertThat(scraper.scrape().join()).isNotNull().satisfies(menu -> {
+            assertThat(menu.dishes())
+                    .hasSize(6)
+                    .anySatisfy(dish -> {
+                        final String expected = "Cremige Kürbissuppe nach Art des Hauses (veget.) (glu-frei)";
+                        assertThat(dish.name()).isEqualTo(expected);
+                    })
+                    .anySatisfy(dish -> {
+                        final String expected = "Kichererbsenkorma mit Reis (vegan) (glu-frei)";
+                        assertThat(dish.name()).isEqualTo(expected);
+                    })
+                    .anySatisfy(dish -> {
+                        final String expected = "Puten-Senf-Eintopf mit Bulgur";
+                        assertThat(dish.name()).isEqualTo(expected);
+                    })
+                    .anySatisfy(dish -> {
+                        final String expected = "Apfel-Möhren-Ingwer-Suppe (vegan) (glu-frei)";
+                        assertThat(dish.name()).isEqualTo(expected);
+                    })
+                    .anySatisfy(dish -> {
+                        final String expected = "Ital. Tomaten-Tortellini-Eintopf (veget.) (wahlw. mit Parmesan)";
+                        assertThat(dish.name()).isEqualTo(expected);
+                    })
+                    .anySatisfy(dish -> {
+                        final String expected = "Thai-Hühnchen-Suppe mit Glasnudeln";
+                        assertThat(dish.name()).isEqualTo(expected);
+                    });
+        });
     }
 
     @SuppressWarnings("unchecked")
