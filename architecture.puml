@@ -1,0 +1,24 @@
+@startuml
+!includeurl https://raw.githubusercontent.com/RicardoNiepel/C4-PlantUML/master/C4_Container.puml
+
+title Container Diagram for Food Hub
+
+System_Boundary(food_hub_system, "Food Hub") {
+    Container(suppe_mag_brot_scraper, "suppemagbrot-scraper", "Spring Boot")
+    ContainerDb(suppe_mag_brot_db, "suppemagbrot-database", "postgres")
+    Container(food_hub_api, "food-hub-api", "Spring Boot")
+    ContainerDb(food_hub_db, "food-hub-database", "postgres")
+    Container(food_hub_ui, "food-hub-ui", "React")
+    ContainerQueue(food_inbox_queue, "food-hub-inbox", "Kafka")
+}
+
+System_Ext(suppemagbrot_ext_system, "suppemagbrot.de")
+
+Rel(suppe_mag_brot_scraper, suppemagbrot_ext_system, "scrapes from", "HTTP")
+Rel(suppe_mag_brot_scraper, suppe_mag_brot_db, "stores to", "JDBC Driver")
+Rel(suppe_mag_brot_scraper, food_inbox_queue, "publishes to", "TCP")
+Rel(food_hub_ui, food_hub_api, "renders data from", "HTTP")
+Rel(food_hub_api, food_inbox_queue, "listen to", "TCP")
+Rel(food_hub_api, food_hub_db, "reads/writes", "JDBC Driver")
+
+@enduml
